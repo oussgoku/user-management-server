@@ -30,3 +30,14 @@ exports.checkAdmin = async (req, res, next) => {
       res.status(403).json({ message: 'Access denied' });
     }
   }
+
+  // Middleware to check if the token is blacklisted
+exports.checkTokenBlacklist = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+
+  if (tokenBlacklist.includes(token)) {
+      return res.status(401).json({ message: 'Token has been invalidated' });
+  }
+
+  next();
+};

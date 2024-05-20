@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Employee = require('../model/Employee');
-const secretKey = 'your_secret_key';
 
 exports.registerEmployee = async (req, res) => {
     const { name, position, email, password } = req.body;

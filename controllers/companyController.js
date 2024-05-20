@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Company = require('../model/Company');
 
+let tokenBlacklist = [];
+
 exports.registerCompany = async (req, res) => {
     const { name, address, companySize, password } = req.body;
     try {
@@ -28,6 +30,15 @@ exports.loginCompany = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
+};
+
+exports.logoutCompany = (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]; // Assuming the token is in the "Authorization" header
+
+    if (!token) return res.status(400).json({ message: 'No token provided' });
+
+    tokenBlacklist.push(token);
+    res.json({ message: 'Logged out successfully' });
 };
 
 exports.getCompanies = async (req, res) => {
@@ -67,7 +78,8 @@ exports.addEmployeeToCompany = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-exports.removeEmployeeToCompany = async (req, res) => {
+
+exports.removeEmployeeFromCompany = async (req, res) => { // Corrected function name to removeEmployeeFromCompany
     try {
         const company = await Company.findById(req.params.id);
         company.employees.pull(req.body.employeeId);
@@ -77,3 +89,5 @@ exports.removeEmployeeToCompany = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+
