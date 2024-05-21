@@ -13,6 +13,15 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phoneNumber: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     employees: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee'

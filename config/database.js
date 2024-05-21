@@ -1,16 +1,21 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const connectDB = async () => {
   try {
-    // mongodb connection string
-    const con = await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      serverSelectionTimeoutMS: 30000, 
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     });
-    console.log(`mongoDB connected: ${con.connection.host}`);
+    console.log('MongoDB connected...');
   } catch (err) {
-    console.log(err);
+    console.error(err.message);
     process.exit(1);
   }
 };
-connectDB();
+
+module.exports = connectDB;

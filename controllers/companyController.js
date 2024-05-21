@@ -5,21 +5,22 @@ const Company = require('../model/Company');
 let tokenBlacklist = [];
 
 exports.registerCompany = async (req, res) => {
-    const { name, address, companySize, password } = req.body;
+    const { name, email, address, companySize, password, phoneNumber } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newCompany = new Company({ name, address, companySize, password: hashedPassword });
+        const newCompany = new Company({ name,email,  address, companySize, password: hashedPassword, phoneNumber });
         await newCompany.save();
         res.status(201).json({ message: 'Company registered successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-
 exports.loginCompany = async (req, res) => {
-    const { name, password } = req.body;
+    const { email, password } = req.body;
+    console.log(req);
     try {
-        const company = await Company.findOne({ name });
+        const company = await Company.findOne({ email });
+        console.log(company);
         if (!company) return res.status(404).json({ message: 'Company not found' });
 
         const isMatch = await bcrypt.compare(password, company.password);
