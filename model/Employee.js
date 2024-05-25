@@ -19,9 +19,33 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    dateHired: {
+    company: { type: mongoose.Schema.Types.ObjectId, ref: 'NormalCompany', required: true },
+    position: { type: String, required: true },
+    salary: {
+        type: Number,
+        default: 0.0
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    address: {
+        street: String,
+        city: String,
+        state: String,
+        zip: String
+    },
+    dateOfBirth: {
+        type: Date
+    },
+    hireDate: {
         type: Date,
         default: Date.now
+    },
+    companyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: true
     }
 });
 employeeSchema.pre('save', async function (next) {
