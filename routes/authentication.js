@@ -84,5 +84,94 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 });
+// Forget Password route
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    let user = await Company.findOne({ email });
+    let userType = 'company';
+
+    if (!user) {
+      user = await Employee.findOne({ email });
+      userType = 'employee';
+    }
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = resetPasswordExpires;
+
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      to: email,
+      from: process.env.EMAIL_USER,
+      subject: 'Password Reset',
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+      Please click on the following link, or paste this into your browser to complete the process:\n\n
+      http://${req.headers.host}/reset-password/${resetToken}\n\n
+      If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error('Error sending email:', err);
+        return res.status(500).json({ message: 'Error sending email' });
+      } else {
+        console.log('Email sent:', info.response);
+        res.status(200).json({ message: 'Password reset email sent' });
+      }
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Reset Password route
+router.post('/reset-password/:token', async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    let user = await Company.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      user = await Employee.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() },
+      });
+    }
+
+    if (!user) return res.status(400).json({ message: 'Password reset token is invalid or has expired' });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: 'Password has been reset' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
 
 module.exports = router;
