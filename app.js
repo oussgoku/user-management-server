@@ -8,6 +8,7 @@ const port = 5001;
 const companyRoutes = require('./routes/company');
 const employeeRoutes = require('./routes/employee');
 const authRoutes = require('./routes/authentication');
+const accountingFirmRoutes = require('./routes/accountingFirmRoutes');
 const swaggerSetup = require('./swagger/swagger');
 const Company = require('./model/Company');
 swaggerSetup(app);
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/api/companies', companyRoutes);
 
 app.use('/api/employees', employeeRoutes);
+app.use('/api/accounting-firm', accountingFirmRoutes);
 app.use('/auth', authRoutes);
 
 

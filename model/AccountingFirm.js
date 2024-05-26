@@ -11,6 +11,17 @@ const AccountingFirmSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     password: { type: String, required: true }
 });
+AccountingFirmSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    try {
+        const hashedPassword = await bcrypt.hash(this.password, 10);
+        this.password = hashedPassword;
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 const AccountingFirm = mongoose.model('AccountingFirm', AccountingFirmSchema);
 
