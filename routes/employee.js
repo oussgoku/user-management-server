@@ -51,5 +51,10 @@ const router = express.Router();
  *         description: Internal server error
  */
 router.post('/login', employeeController.loginEmployee);
+router.post('/employees', employeeController.createEmployee);
+router.get('/employees', employeeController.getEmployees);
+router.get('/employees/:id', employeeController.getEmployeeById);
+router.put('/employees/:id', employeeController.updateEmployee);
+router.delete('/employees/:id', employeeController.deleteEmployee);
 
 module.exports = router;

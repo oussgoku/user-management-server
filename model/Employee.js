@@ -19,7 +19,7 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    company: { type: mongoose.Schema.Types.ObjectId, ref: 'NormalCompany', required: true },
+    company: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', required: true },
     position: { type: String, required: true },
     salary: {
         type: Number,

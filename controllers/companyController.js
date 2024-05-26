@@ -8,7 +8,7 @@ exports.registerCompany = async (req, res) => {
     const { name, email, address, companySize, password, phoneNumber } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newCompany = new Company({ name,email,  address, companySize, password: hashedPassword, phoneNumber });
+        const newCompany = new Company({ name, email, address, companySize, password: hashedPassword, phoneNumber });
         await newCompany.save();
         res.status(201).json({ message: 'Company registered successfully' });
     } catch (error) {
