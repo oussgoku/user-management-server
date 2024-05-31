@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const companySchema = new mongoose.Schema({
-    name: {
+    companyName: {
         type: String,
         required: true
     },
@@ -11,16 +11,12 @@ const companySchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     phoneNumber: {
         type: String,
         required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
     },
     employees: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -35,6 +31,14 @@ const companySchema = new mongoose.Schema({
         default: Date.now
     },
     password: {
+        type: String,
+        required: true
+    },
+    creatorFirstName: {
+        type: String,
+        required: true
+    },
+    creatorLastName: {
         type: String,
         required: true
     }

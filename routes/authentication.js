@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
   }
 });
 router.post('/register', async (req, res) => {
-  const { type, name, email, address, companySize, password, phoneNumber, position } = req.body;
+  const { type, companyName, email, address, companySize, password, phoneNumber, position, creatorFirstName, creatorLastName } = req.body;
 
   if (!type || (type !== 'company' && type !== 'employee')) {
     return res.status(400).json({ message: 'Invalid type. Must be either company or employee.' });
@@ -44,13 +44,29 @@ router.post('/register', async (req, res) => {
   try {
     if (type === 'company') {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newCompany = new Company({ name, email, address, companySize, password: hashedPassword, phoneNumber });
+      const newCompany = new Company({
+        companyName,
+        email,
+        address,
+        companySize,
+        password: hashedPassword,
+        phoneNumber,
+        creatorFirstName,
+        creatorLastName
+      });
       await newCompany.save();
       return res.status(201).json({ message: 'Company registered successfully' });
     } else if (type === 'employee') {
       const tempPassword = crypto.randomBytes(8).toString('hex'); // Generate temporary password
       const hashedPassword = await bcrypt.hash(tempPassword, 10);
-      const newEmployee = new Employee({ name, position, email, password: hashedPassword });
+      const newEmployee = new Employee({
+        name,
+        position,
+        email,
+        password: hashedPassword,
+        creatorFirstName,
+        creatorLastName
+      });
       await newEmployee.save();
 
       // Sending email logic
@@ -84,6 +100,7 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 });
+
 // Forget Password route
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;

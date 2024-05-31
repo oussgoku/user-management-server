@@ -1,6 +1,6 @@
-import AccountingFirm, { find, findById, findByIdAndUpdate, findByIdAndDelete } from '../models/AccountingFirm';
+const AccountingFirm = require('../model/AccountingFirm');
 
-export async function createAccountingFirm(req, res) {
+async function createAccountingFirm(req, res) {
     try {
         const newFirm = new AccountingFirm(req.body);
         await newFirm.save();
@@ -10,18 +10,18 @@ export async function createAccountingFirm(req, res) {
     }
 }
 
-export async function getAccountingFirms(req, res) {
+async function getAccountingFirms(req, res) {
     try {
-        const firms = await find().populate('experts');
+        const firms = await AccountingFirm.find().populate('experts');
         res.status(200).json(firms);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 
-export async function getAccountingFirmById(req, res) {
+async function getAccountingFirmById(req, res) {
     try {
-        const firm = await findById(req.params.id).populate('experts');
+        const firm = await AccountingFirm.findById(req.params.id).populate('experts');
         if (!firm) {
             return res.status(404).json({ message: 'Accounting firm not found' });
         }
@@ -31,9 +31,9 @@ export async function getAccountingFirmById(req, res) {
     }
 }
 
-export async function updateAccountingFirm(req, res) {
+async function updateAccountingFirm(req, res) {
     try {
-        const updatedFirm = await findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('experts');
+        const updatedFirm = await AccountingFirm.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('experts');
         if (!updatedFirm) {
             return res.status(404).json({ message: 'Accounting firm not found' });
         }
@@ -43,9 +43,9 @@ export async function updateAccountingFirm(req, res) {
     }
 }
 
-export async function deleteAccountingFirm(req, res) {
+async function deleteAccountingFirm(req, res) {
     try {
-        const deletedFirm = await findByIdAndDelete(req.params.id);
+        const deletedFirm = await AccountingFirm.findByIdAndDelete(req.params.id);
         if (!deletedFirm) {
             return res.status(404).json({ message: 'Accounting firm not found' });
         }
@@ -54,3 +54,11 @@ export async function deleteAccountingFirm(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+module.exports = {
+    createAccountingFirm,
+    getAccountingFirms,
+    getAccountingFirmById,
+    updateAccountingFirm,
+    deleteAccountingFirm,
+};
